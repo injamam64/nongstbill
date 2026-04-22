@@ -1,29 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    <link rel="stylesheet" href="./style.css">
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M.D. Jewellers - Non-GST Bill</title>
-    <link rel="stylesheet" href="nongst-style.css">
+    <style>
+        /* --- STYLES --- */
+        body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; background-color: #f4f7f6; }
+        #form-container { max-width: 650px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .no-print fieldset { border: 1px solid #ddd; margin-bottom: 15px; padding: 10px; border-radius: 5px; }
+        .no-print input, .no-print select { width: 100%; padding: 8px; margin: 5px 0 12px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row div { flex: 1; }
+        .primary-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        .add-btn { width: 100%; padding: 10px; background: #3498db; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-bottom: 10px; }
+
+        /* --- BILL PAGE STYLES --- */
+        .bill-page { width: 148mm; height: 210mm; margin: auto; background: white; padding: 10mm 15mm; box-sizing: border-box; border: 1px solid #eee; }
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+        .header-logo { height: 50px; width: auto; display: block; margin: 0 auto; }
+        .jeweller-info { border: 2.2px solid #000; padding: 5px; background-color: #fcece8 !important; text-align: center; }
+        .shop-name { margin: 0; font-size: 22pt; font-weight: 900; }
+        .tax-invoice { margin: 2px 0 0 0; font-size: 10pt; letter-spacing: 2px; font-weight: bold; }
+        
+        /* New Sub-Header Styles */
+        .sub-header { width: 100%; border-collapse: collapse; margin-top: 5px; margin-bottom: 10px; font-size: 10pt; }
+        .sub-header td { vertical-align: top; }
+        
+        .bill-info { display: flex; justify-content: space-between; margin: 10px 0; font-size: 11pt; border-bottom: 1px solid #000; border-top: 1px solid #000; padding: 5px 0; }
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .items-table th, .items-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 10pt; }
+        .items-table th { background: #f2f2f2; }
+        
+        .summary-area { display: flex; justify-content: space-between; margin-top: 20px; }
+        .amount-words { width: 55%; font-size: 10pt; text-transform: uppercase; border: 1px solid #000; padding: 10px; height: fit-content; }
+        .totals-box { width: 40%; text-align: right; font-size: 11pt; }
+        .thick-line { border-bottom: 2px solid #000; margin: 5px 0; }
+        
+        .signature-container { display: flex; justify-content: space-between; margin-top: 60px; font-weight: bold; font-size: 10pt; }
+
+        @media print {
+            .no-print { display: none !important; }
+            .bill-page { border: none; margin: 0; width: 100%; }
+            .jeweller-info { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
 </head>
 <body>
 
     <div id="form-container" class="no-print">
         <h2>M.D. Jewellers (Non-GST)</h2>
         <div class="form-row">
-            <input type="text" id="buyerName" placeholder="Buyer Name">
-            <input type="date" id="billDate">
+            <div>
+                <label>Bill Number</label>
+                <input type="text" id="billNo" placeholder="e.g. 101">
+            </div>
+            <div>
+                <label>Buyer Name</label>
+                <input type="text" id="buyerName" placeholder="Customer Name">
+            </div>
+        </div>
+        <div class="form-row">
+             <div>
+                <label>Order Date & Time</label>
+                <input type="datetime-local" id="billDate">
+            </div>
         </div>
         
         <fieldset>
@@ -45,28 +86,41 @@
             <select id="paymentMethod">
                 <option value="CASH">CASH</option>
                 <option value="UPI">UPI</option>
+                <option value="CASH & UPI BOTH">CASH & UPI BOTH</option>
             </select>
         </div>
-        <button class="primary-btn" onclick="generateBill()">PRINT BILL</button>
+        <button class="primary-btn" onclick="generateBill()">PRINT NON-GST BILL</button>
     </div>
 
     <div class="bill-page" id="bill">
         <table class="header-table">
             <tr>
-                <td class="header-logo-cell"><img src="md-logo.png" class="header-logo"></td>
-                <td class="header-text-cell">
+                <td style="width:15%"><img src="md-logo.png" class="header-logo"></td>
+                <td style="width:70%">
                     <div class="jeweller-info">
                         <h1 class="shop-name">M.D. JEWELLERS</h1>
                         <p class="tax-invoice">ESTIMATE / BILL</p>
                     </div>
                 </td>
-                <td class="header-logo-cell"><img src="bis-logo.png" class="header-logo"></td>
+                <td style="width:15%"><img src="bis-logo.png" class="header-logo"></td>
+            </tr>
+        </table>
+
+        <table class="sub-header">
+            <tr>
+                <td style="text-align: left; width: 60%;">
+                    <strong>Address:</strong> Illambazar, Dubrajpur Road, Birbhum<br>
+                    <strong>Contact:</strong> +91 XXXXXXXXXX
+                </td>
+                <td style="text-align: right; width: 40%; font-size: 12pt;">
+                    <strong>BILL NO:</strong> <span id="outBillNo" style="color: red;"></span>
+                </td>
             </tr>
         </table>
 
         <div class="bill-info">
-            <p><strong>Customer:</strong> <span id="outName"></span></p>
-            <p><strong>Date:</strong> <span id="outDate"></span></p>
+            <div><strong>Customer:</strong> <span id="outName"></span></div>
+            <div><strong>Date & Time:</strong> <span id="outDate"></span></div>
         </div>
 
         <table class="items-table">
@@ -81,13 +135,12 @@
                     <th>TOTAL</th>
                 </tr>
             </thead>
-            <tbody id="bill-body">
-                </tbody>
+            <tbody id="bill-body"></tbody>
         </table>
 
         <div class="summary-area">
             <div class="amount-words">
-                <strong>IN WORDS:</strong> <span id="outWords"></span>
+                <strong>IN WORDS:</strong> <br><span id="outWords"></span>
             </div>
             <div class="totals-box">
                 <p>SUB TOTAL: ₹ <span id="sumSub">0.00</span></p>
@@ -99,16 +152,87 @@
         </div>
 
         <div class="signature-container">
-            <div>__________________________<br>CUSTOMER SIGNATURE</div>
+           
             <div>__________________________<br>FOR M.D. JEWELLERS</div>
         </div>
     </div>
 
-    <script src="nongst-script.js"></script>
-</body>
-</html>
-    <script  src="./script.js"></script>
+    <script>
+        let items = [];
 
-  </body>
-  
+        function addItem() {
+            const desc = document.getElementById('itemDesc').value;
+            const purity = document.getElementById('itemPurity').value;
+            const weight = parseFloat(document.getElementById('itemWeight').value) || 0;
+            const rate = parseFloat(document.getElementById('itemRate').value) || 0;
+            const making = parseFloat(document.getElementById('itemMaking').value) || 0;
+
+            if (!desc || weight <= 0) { alert("Please enter description and weight"); return; }
+
+            const total = (weight * rate) + making;
+            items.push({ desc, purity, weight, rate, making, total });
+            
+            updateTable();
+            document.getElementById('itemDesc').value = '';
+            document.getElementById('itemWeight').value = '';
+        }
+
+        function updateTable() {
+            const body = document.getElementById('bill-body');
+            body.innerHTML = "";
+            items.forEach((item, index) => {
+                body.innerHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${item.desc}</td>
+                    <td>${item.purity}</td>
+                    <td>${item.weight.toFixed(3)}</td>
+                    <td>${item.rate.toFixed(2)}</td>
+                    <td>${item.making.toFixed(2)}</td>
+                    <td>${item.total.toFixed(2)}</td>
+                </tr>`;
+            });
+        }
+
+        function generateBill() {
+            const dateInput = document.getElementById('billDate').value;
+            if (!dateInput) { alert("Please select Order Date and Time"); return; }
+
+            const dateObj = new Date(dateInput);
+            const options = { 
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: true 
+            };
+            const formattedDateTime = dateObj.toLocaleString('en-IN', options);
+
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const subTotal = items.reduce((sum, item) => sum + item.total, 0);
+            const netPayable = Math.round(subTotal - discount);
+
+            document.getElementById('outBillNo').textContent = document.getElementById('billNo').value || "N/A";
+            document.getElementById('outName').textContent = document.getElementById('buyerName').value || "Valued Customer";
+            document.getElementById('outDate').textContent = formattedDateTime;
+            document.getElementById('sumSub').textContent = subTotal.toFixed(2);
+            document.getElementById('sumDisc').textContent = discount.toFixed(2);
+            document.getElementById('sumNet').textContent = netPayable.toFixed(2);
+            document.getElementById('outPay').textContent = document.getElementById('paymentMethod').value;
+            document.getElementById('outWords').textContent = numberToWords(netPayable) + " ONLY";
+
+            setTimeout(() => { window.print(); }, 300);
+        }
+
+        function numberToWords(n) {
+            const w = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"];
+            const t = ["", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"];
+            const convert = (num) => {
+                if (num < 20) return w[num];
+                if (num < 100) return t[Math.floor(num/10)] + (num%10 !== 0 ? " " + w[num%10] : "");
+                if (num < 1000) return w[Math.floor(num/100)] + " HUNDRED" + (num%100 !== 0 ? " AND " + convert(num%100) : "");
+                if (num < 100000) return convert(Math.floor(num/1000)) + " THOUSAND" + (num%1000 !== 0 ? " " + convert(num%1000) : "");
+                return convert(Math.floor(num/100000)) + " LAKH" + (num%100000 !== 0 ? " " + convert(num%100000) : "");
+            };
+            return n === 0 ? "ZERO" : convert(n);
+        }
+    </script>
+</body>
 </html>
