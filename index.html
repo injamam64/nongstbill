@@ -3,235 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M.D. Jewellers - Non-GST Bill</title>
+    <title>M.D. Jewellers - Bill with QR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* --- STYLES --- */
-        body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; background-color: #f4f7f6; }
-        #form-container { max-width: 650px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .no-print fieldset { border: 1px solid #ddd; margin-bottom: 15px; padding: 10px; border-radius: 5px; }
-        .no-print input, .no-print select { width: 100%; padding: 8px; margin: 5px 0 12px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .form-row { display: flex; gap: 10px; }
-        .form-row div { flex: 1; }
-        .primary-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        .add-btn { width: 100%; padding: 10px; background: #3498db; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-bottom: 10px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Times New Roman', serif; background-color: #f4f7f6; color: #000; }
 
-        /* --- BILL PAGE STYLES --- */
-        .bill-page { width: 148mm; height: 210mm; margin: auto; background: white; padding: 10mm 15mm; box-sizing: border-box; border: 1px solid #eee; }
-        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-        .header-logo { height: 50px; width: auto; display: block; margin: 0 auto; }
-        .jeweller-info { border: 2.2px solid #000; padding: 5px; background-color: #fcece8 !important; text-align: center; }
-        .shop-name { margin: 0; font-size: 22pt; font-weight: 900; }
-        .tax-invoice { margin: 2px 0 0 0; font-size: 10pt; letter-spacing: 2px; font-weight: bold; }
-        
-        /* New Sub-Header Styles */
-        .sub-header { width: 100%; border-collapse: collapse; margin-top: 5px; margin-bottom: 10px; font-size: 10pt; }
-        .sub-header td { vertical-align: top; }
-        
-        .bill-info { display: flex; justify-content: space-between; margin: 10px 0; font-size: 11pt; border-bottom: 1px solid #000; border-top: 1px solid #000; padding: 5px 0; }
-        .items-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .items-table th, .items-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 10pt; }
+        /* FORM STYLES */
+        #form-container { max-width: 800px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-row { display: flex; gap: 15px; margin-bottom: 10px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+        label { font-size: 0.9em; font-weight: bold; margin-bottom: 4px; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        fieldset { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+        .add-btn { padding: 12px; background: #3498db; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; width: 100%; }
+        .print-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; font-size: 1.1em; font-weight: bold; cursor: pointer; border-radius: 4px; }
+
+        /* BILL PAGE STYLES */
+        .bill-page { width: 148mm; min-height: 210mm; margin: 20px auto; background: white; padding: 10mm; border: 1px solid #000; position: relative; }
+        .jeweller-info-box { border: 2px solid #000; padding: 10px; background-color: #fcece8 !important; text-align: center; margin-bottom: 5px; }
+        .shop-name { font-size: 24pt; font-weight: 900; margin: 0; }
+        .header-logos { display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 10px; }
+        .header-logos img { height: 45px; }
+        .contact-row { display: flex; justify-content: space-between; font-size: 10pt; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        .bill-meta { margin: 10px 0; font-size: 11pt; border-bottom: 1px solid #000; padding-bottom: 5px; display: flex; justify-content: space-between; }
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        .items-table th, .items-table td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 9pt; }
         .items-table th { background: #f2f2f2; }
-        
-        .summary-area { display: flex; justify-content: space-between; margin-top: 20px; }
-        .amount-words { width: 55%; font-size: 10pt; text-transform: uppercase; border: 1px solid #000; padding: 10px; height: fit-content; }
-        .totals-box { width: 40%; text-align: right; font-size: 11pt; }
-        .thick-line { border-bottom: 2px solid #000; margin: 5px 0; }
-        
-        .signature-container { display: flex; justify-content: space-between; margin-top: 60px; font-weight: bold; font-size: 10pt; }
+        .summary-wrapper { display: flex; justify-content: space-between; margin-top: 15px; }
+        .words-box { width: 55%; border: 1px solid #000; padding: 10px; min-height: 70px; font-size: 9pt; background: #f9f9f9 !important; }
+        .totals-box { width: 40%; text-align: right; font-size: 10pt; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .grand-total { border-top: 2px solid #000; padding-top: 5px; font-weight: bold; font-size: 11pt; }
+
+        /* QR CODE POSITIONING */
+        .footer-container { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+        #qrcode { width: 100px; height: 100px; border: 1px solid #eee; padding: 5px; }
+        .signature-area { width: 60%; text-align: right; font-weight: bold; font-size: 10pt; }
 
         @media print {
             .no-print { display: none !important; }
-            .bill-page { border: none; margin: 0; width: 100%; }
-            .jeweller-info { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .bill-page { margin: 0; border: 1px solid #000 !important; width: 148mm; height: 210mm; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size: A5; margin: 0; }
         }
     </style>
 </head>
 <body>
 
     <div id="form-container" class="no-print">
-        <h2>M.D. Jewellers (Non-GST)</h2>
+        <h2>M.D. Jewellers - Bill Entry</h2>
         <div class="form-row">
-            <div>
-                <label>Bill Number</label>
-                <input type="text" id="billNo" placeholder="e.g. 101">
-            </div>
-            <div>
-                <label>Buyer Name</label>
-                <input type="text" id="buyerName" placeholder="Customer Name">
-            </div>
+            <div class="form-group"><label>Bill No</label><input type="text" id="inBillNo"></div>
+            <div class="form-group"><label>Buyer Name</label><input type="text" id="inBuyerName"></div>
+            <div class="form-group"><label>Date & Time</label><input type="datetime-local" id="inBillDate"></div>
         </div>
-        <div class="form-row">
-             <div>
-                <label>Order Date & Time</label>
-                <input type="datetime-local" id="billDate">
-            </div>
-        </div>
-        
         <fieldset>
-            <legend>Add Item</legend>
+            <legend>Items</legend>
             <div class="form-row">
-                <input type="text" id="itemDesc" placeholder="Description (e.g. Ring)">
-                <input type="text" id="itemPurity" value="22K916">
+                <input style="flex:2" type="text" id="inDesc" placeholder="Description">
+                <input type="text" id="inPurity" value="22K916">
             </div>
             <div class="form-row">
-                <input type="number" id="itemWeight" step="0.001" placeholder="Weight (gms)">
-                <input type="number" id="itemRate" placeholder="Rate per gm">
-                <input type="number" id="itemMaking" placeholder="Making Charge">
+                <input type="number" id="inWeight" step="0.001" placeholder="Weight">
+                <input type="number" id="inRate" placeholder="Rate">
+                <input type="number" id="inMaking" value="0" placeholder="Making">
             </div>
-            <button type="button" class="add-btn" onclick="addItem()">+ Add to Bill</button>
+            <button class="add-btn" onclick="addItem()">+ Add Item</button>
         </fieldset>
-
-        <div class="form-row" style="margin-top:15px;">
-            <input type="number" id="discount" placeholder="Discount">
-            <select id="paymentMethod">
+        <div class="form-row">
+            <input type="number" id="inDiscount" value="0" placeholder="Discount">
+            <select id="inPayment">
                 <option value="CASH">CASH</option>
                 <option value="UPI">UPI</option>
-                <option value="CASH & UPI BOTH">CASH & UPI BOTH</option>
             </select>
         </div>
-        <button class="primary-btn" onclick="generateBill()">PRINT NON-GST BILL</button>
+        <button class="print-btn" onclick="generateAndPrint()">GENERATE & PRINT</button>
     </div>
 
-    <div class="bill-page" id="bill">
-        <table class="header-table">
-            <tr>
-                <td style="width:15%"><img src="md-logo.png" class="header-logo"></td>
-                <td style="width:70%">
-                    <div class="jeweller-info">
-                        <h1 class="shop-name">M.D. JEWELLERS</h1>
-                        <p class="tax-invoice">ESTIMATE / BILL</p>
-                    </div>
-                </td>
-                <td style="width:15%"><img src="bis-logo.png" class="header-logo"></td>
-            </tr>
-        </table>
+    <div class="bill-page" id="bill-render">
+        <div class="header-main">
+            <div class="jeweller-info-box">
+                <h1 class="shop-name">M.D. JEWELLERS</h1>
+                <p>ESTIMATE / BILL</p>
+            </div>
+            <div class="header-logos">
+                <img src="md-logo.png" alt="">
+                <img src="bis-logo.png" alt="">
+            </div>
+        </div>
 
-        <table class="sub-header">
-            <tr>
-                <td style="text-align: left; width: 60%;">
-                    <strong>Address:</strong> Illambazar, Dubrajpur Road, Birbhum<br>
-                    <strong>Contact:</strong> +91 XXXXXXXXXX
-                </td>
-                <td style="text-align: right; width: 40%; font-size: 12pt;">
-                    <strong>BILL NO:</strong> <span id="outBillNo" style="color: red;"></span>
-                </td>
-            </tr>
-        </table>
+        <div class="contact-row">
+            <div>Address: Illambazar, Dubrajpur Road, Birbhum<br>Contact: +91 9735433230</div>
+            <div><strong>BILL NO:</strong> <span id="outBillNo" style="color:red;"></span></div>
+        </div>
 
-        <div class="bill-info">
+        <div class="bill-meta">
             <div><strong>Customer:</strong> <span id="outName"></span></div>
-            <div><strong>Date & Time:</strong> <span id="outDate"></span></div>
+            <div><strong>Date:</strong> <span id="outDate"></span></div>
         </div>
 
         <table class="items-table">
             <thead>
                 <tr>
-                    <th>SL</th>
-                    <th>DESCRIPTION</th>
-                    <th>PURITY</th>
-                    <th>WEIGHT</th>
-                    <th>RATE</th>
-                    <th>MAKING</th>
-                    <th>TOTAL</th>
+                    <th>SL</th><th>DESCRIPTION</th><th>PURITY</th><th>WEIGHT</th><th>RATE</th><th>MAKING</th><th>TOTAL</th>
                 </tr>
             </thead>
-            <tbody id="bill-body"></tbody>
+            <tbody id="outItemsBody"></tbody>
         </table>
 
-        <div class="summary-area">
-            <div class="amount-words">
-                <strong>IN WORDS:</strong> <br><span id="outWords"></span>
-            </div>
+        <div class="summary-wrapper">
+            <div class="words-box"><strong>IN WORDS:</strong><br><span id="outWords"></span></div>
             <div class="totals-box">
-                <p>SUB TOTAL: ₹ <span id="sumSub">0.00</span></p>
-                <p>DISCOUNT: ₹ <span id="sumDisc">0.00</span></p>
-                <div class="thick-line"></div>
-                <p><strong>NET PAYABLE: ₹ <span id="sumNet">0.00</span></strong></p>
-                <p>PAID VIA: <span id="outPay"></span></p>
+                <div class="total-row"><span>SUB TOTAL:</span><span>₹ <span id="outSub">0.00</span></span></div>
+                <div class="total-row"><span>DISCOUNT:</span><span>₹ <span id="outDisc">0.00</span></span></div>
+                <div class="total-row grand-total"><span>NET PAYABLE:</span><span>₹ <span id="outNet">0.00</span></span></div>
             </div>
         </div>
 
-        <div class="signature-container">
-           
-            <div>__________________________<br>FOR M.D. JEWELLERS</div>
+        <div class="footer-container">
+            <div id="qrcode"></div> <div class="signature-area">
+                <div style="margin-bottom: 40px;">__________________________</div>
+                <div>FOR M.D. JEWELLERS</div>
+            </div>
         </div>
     </div>
 
     <script>
         let items = [];
+        let qrInstance = null;
 
         function addItem() {
-            const desc = document.getElementById('itemDesc').value;
-            const purity = document.getElementById('itemPurity').value;
-            const weight = parseFloat(document.getElementById('itemWeight').value) || 0;
-            const rate = parseFloat(document.getElementById('itemRate').value) || 0;
-            const making = parseFloat(document.getElementById('itemMaking').value) || 0;
+            const desc = document.getElementById('inDesc').value;
+            const weight = parseFloat(document.getElementById('inWeight').value) || 0;
+            const rate = parseFloat(document.getElementById('inRate').value) || 0;
+            const making = parseFloat(document.getElementById('inMaking').value) || 0;
+            const purity = document.getElementById('inPurity').value;
 
-            if (!desc || weight <= 0) { alert("Please enter description and weight"); return; }
+            if (!desc || weight <= 0) return alert("Enter item details");
 
             const total = (weight * rate) + making;
             items.push({ desc, purity, weight, rate, making, total });
-            
-            updateTable();
-            document.getElementById('itemDesc').value = '';
-            document.getElementById('itemWeight').value = '';
+            renderTable();
         }
 
-        function updateTable() {
-            const body = document.getElementById('bill-body');
-            body.innerHTML = "";
-            items.forEach((item, index) => {
-                body.innerHTML += `<tr>
-                    <td>${index + 1}</td>
-                    <td>${item.desc}</td>
-                    <td>${item.purity}</td>
-                    <td>${item.weight.toFixed(3)}</td>
-                    <td>${item.rate.toFixed(2)}</td>
-                    <td>${item.making.toFixed(2)}</td>
-                    <td>${item.total.toFixed(2)}</td>
-                </tr>`;
+        function renderTable() {
+            const tbody = document.getElementById('outItemsBody');
+            tbody.innerHTML = '';
+            items.forEach((it, i) => {
+                tbody.innerHTML += `<tr><td>${i+1}</td><td>${it.desc}</td><td>${it.purity}</td><td>${it.weight.toFixed(3)}</td><td>${it.rate}</td><td>${it.making}</td><td>${it.total.toFixed(2)}</td></tr>`;
             });
         }
 
-        function generateBill() {
-            const dateInput = document.getElementById('billDate').value;
-            if (!dateInput) { alert("Please select Order Date and Time"); return; }
+        function generateAndPrint() {
+            const name = document.getElementById('inBuyerName').value || "Valued Customer";
+            const date = new Date(document.getElementById('inBillDate').value).toLocaleString();
+            const discount = parseFloat(document.getElementById('inDiscount').value) || 0;
+            const sub = items.reduce((a, b) => a + b.total, 0);
+            const net = Math.round(sub - discount);
 
-            const dateObj = new Date(dateInput);
-            const options = { 
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit',
-                hour12: true 
-            };
-            const formattedDateTime = dateObj.toLocaleString('en-IN', options);
+            // Update Text Fields
+            document.getElementById('outBillNo').innerText = document.getElementById('inBillNo').value;
+            document.getElementById('outName').innerText = name;
+            document.getElementById('outDate').innerText = date;
+            document.getElementById('outSub').innerText = sub.toFixed(2);
+            document.getElementById('outDisc').innerText = discount.toFixed(2);
+            document.getElementById('outNet').innerText = net.toFixed(2);
 
-            const discount = parseFloat(document.getElementById('discount').value) || 0;
-            const subTotal = items.reduce((sum, item) => sum + item.total, 0);
-            const netPayable = Math.round(subTotal - discount);
+            // Prepare QR Data String
+            let qrText = `Buyer: ${name}\nDate: ${date}\nItems:\n`;
+            items.forEach((it, i) => {
+                qrText += `${i+1}. ${it.desc} (${it.purity}) | Wt: ${it.weight}g | Rate: ${it.rate} | Mk: ${it.making} | Total: ${it.total}\n`;
+            });
+            qrText += `Discount: ${discount}\nNet Amount: ${net}`;
 
-            document.getElementById('outBillNo').textContent = document.getElementById('billNo').value || "N/A";
-            document.getElementById('outName').textContent = document.getElementById('buyerName').value || "Valued Customer";
-            document.getElementById('outDate').textContent = formattedDateTime;
-            document.getElementById('sumSub').textContent = subTotal.toFixed(2);
-            document.getElementById('sumDisc').textContent = discount.toFixed(2);
-            document.getElementById('sumNet').textContent = netPayable.toFixed(2);
-            document.getElementById('outPay').textContent = document.getElementById('paymentMethod').value;
-            document.getElementById('outWords').textContent = numberToWords(netPayable) + " ONLY";
+            // Generate QR
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = ""; // Clear old QR
+            new QRCode(qrContainer, { text: qrText, width: 100, height: 100 });
 
-            setTimeout(() => { window.print(); }, 300);
-        }
-
-        function numberToWords(n) {
-            const w = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"];
-            const t = ["", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"];
-            const convert = (num) => {
-                if (num < 20) return w[num];
-                if (num < 100) return t[Math.floor(num/10)] + (num%10 !== 0 ? " " + w[num%10] : "");
-                if (num < 1000) return w[Math.floor(num/100)] + " HUNDRED" + (num%100 !== 0 ? " AND " + convert(num%100) : "");
-                if (num < 100000) return convert(Math.floor(num/1000)) + " THOUSAND" + (num%1000 !== 0 ? " " + convert(num%1000) : "");
-                return convert(Math.floor(num/100000)) + " LAKH" + (num%100000 !== 0 ? " " + convert(num%100000) : "");
-            };
-            return n === 0 ? "ZERO" : convert(n);
+            setTimeout(() => window.print(), 500);
         }
     </script>
 </body>
