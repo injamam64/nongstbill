@@ -1,0 +1,76 @@
+body { font-family: 'Arial', sans-serif; margin: 0; background: #eee; }
+.no-print { max-width: 600px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.form-row input, select { flex: 1; padding: 10px; border: 1px solid #ccc; }
+.add-btn { background: #3498db; color: white; border: none; padding: 10px; cursor: pointer; width: 100%; border-radius: 4px; }
+.primary-btn { background: #27ae60; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; margin-top: 10px; border-radius: 4px; cursor: pointer; }
+
+/* Bill Design */
+/* Bill Design - Optimized for A5 (Half A4) */
+.bill-page { 
+    width: 148mm; /* Width of A5 */
+    height: 210mm; /* Height of A5 */
+    background: #fff; 
+    margin: 10px auto; 
+    padding: 8mm; 
+    box-sizing: border-box; 
+    border: 1px solid #ccc; /* Visible on screen, hidden in print */
+}
+
+.shop-name { 
+    margin: 0; 
+    font-size: 18pt; /* Slightly smaller for A5 */
+}
+
+.items-table th, .items-table td { 
+    padding: 5px; /* Tighter padding for smaller page */
+    font-size: 9pt; 
+}
+
+/* Reduced Signature Gap for A5 */
+.signature-container { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-top: 40px; /* Reduced from 100px to fit half-page */
+    font-weight: bold; 
+    font-size: 8.5pt; 
+}
+
+@media print {
+    .no-print { display: none; }
+    .bill-page { 
+        margin: 0; 
+        border: none; 
+        width: 100%;
+        height: auto;
+    }
+    /* Critical: Set printer to A5 or '2 pages per sheet' */
+    @page {
+        size: A5;
+        margin: 5mm;
+    }
+    body { background: #fff; }
+}
+.header-table { width: 100%; border-collapse: collapse; }
+.header-logo { height: 48px; width: auto; }
+.header-logo-cell { width: 15%; }
+.header-text-cell { width: 70%; text-align: center; }
+.jeweller-info { border: 1.5px solid #000; padding: 5px; background: #fcece8 !important; }
+.shop-name { margin: 0; font-size: 20pt; }
+
+.items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1.5px solid #000; }
+.items-table th, .items-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 10pt; }
+
+.summary-area { display: flex; justify-content: space-between; margin-top: 20px; }
+.amount-words { width: 55%; border: 1.5px solid #000; padding: 10px; height: auto !important; font-size: 9pt; background: #f9f9f9 !important; }
+.totals-box { width: 40%; text-align: right; line-height: 1.6; }
+.thick-line { border-top: 2px solid #000; margin: 5px 0; }
+
+.signature-container { display: flex; justify-content: space-between; margin-top: 100px; font-weight: bold; font-size: 9pt; }
+
+@media print {
+    .no-print { display: none; }
+    .bill-page { margin: 0; border: none; }
+    body { background: #fff; }
+    .jeweller-info { -webkit-print-color-adjust: exact !important; }
+}
