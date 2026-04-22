@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M.D. Jewellers - Non-GST Bill</title>
+    <link rel="stylesheet" href="nongst-style.css">
+</head>
+<body>
+
+    <div id="form-container" class="no-print">
+        <h2>M.D. Jewellers (Non-GST)</h2>
+        <div class="form-row">
+            <input type="text" id="buyerName" placeholder="Buyer Name">
+            <input type="date" id="billDate">
+        </div>
+        
+        <fieldset>
+            <legend>Add Item</legend>
+            <div class="form-row">
+                <input type="text" id="itemDesc" placeholder="Description (e.g. Ring)">
+                <input type="text" id="itemPurity" value="22K916">
+            </div>
+            <div class="form-row">
+                <input type="number" id="itemWeight" step="0.001" placeholder="Weight (gms)">
+                <input type="number" id="itemRate" placeholder="Rate per gm">
+                <input type="number" id="itemMaking" placeholder="Making Charge">
+            </div>
+            <button type="button" class="add-btn" onclick="addItem()">+ Add to Bill</button>
+        </fieldset>
+
+        <div class="form-row" style="margin-top:15px;">
+            <input type="number" id="discount" placeholder="Discount">
+            <select id="paymentMethod">
+                <option value="CASH">CASH</option>
+                <option value="UPI">UPI</option>
+            </select>
+        </div>
+        <button class="primary-btn" onclick="generateBill()">PRINT BILL</button>
+    </div>
+
+    <div class="bill-page" id="bill">
+        <table class="header-table">
+            <tr>
+                <td class="header-logo-cell"><img src="md-logo.png" class="header-logo"></td>
+                <td class="header-text-cell">
+                    <div class="jeweller-info">
+                        <h1 class="shop-name">M.D. JEWELLERS</h1>
+                        <p class="tax-invoice">ESTIMATE / BILL</p>
+                    </div>
+                </td>
+                <td class="header-logo-cell"><img src="bis-logo.png" class="header-logo"></td>
+            </tr>
+        </table>
+
+        <div class="bill-info">
+            <p><strong>Customer:</strong> <span id="outName"></span></p>
+            <p><strong>Date:</strong> <span id="outDate"></span></p>
+        </div>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>SL</th>
+                    <th>DESCRIPTION</th>
+                    <th>PURITY</th>
+                    <th>WEIGHT</th>
+                    <th>RATE</th>
+                    <th>MAKING</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="bill-body">
+                </tbody>
+        </table>
+
+        <div class="summary-area">
+            <div class="amount-words">
+                <strong>IN WORDS:</strong> <span id="outWords"></span>
+            </div>
+            <div class="totals-box">
+                <p>SUB TOTAL: ₹ <span id="sumSub">0.00</span></p>
+                <p>DISCOUNT: ₹ <span id="sumDisc">0.00</span></p>
+                <div class="thick-line"></div>
+                <p><strong>NET PAYABLE: ₹ <span id="sumNet">0.00</span></strong></p>
+                <p>PAID VIA: <span id="outPay"></span></p>
+            </div>
+        </div>
+
+        <div class="signature-container">
+            <div>__________________________<br>CUSTOMER SIGNATURE</div>
+            <div>__________________________<br>FOR M.D. JEWELLERS</div>
+        </div>
+    </div>
+
+    <script src="nongst-script.js"></script>
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
