@@ -187,10 +187,32 @@
             document.getElementById('outNet').innerText = netAmount.toFixed(2);
             document.getElementById('outWords').innerText = numberToWords(netAmount) + " ONLY";
 
-            const qDiv = document.getElementById("qrcode");
-            qDiv.innerHTML = "";
-            new QRCode(qDiv, { text: "MD Jewellers - Bill No: " + document.getElementById('inBillNo').value + " - Total: " + netAmount, width: 85, height: 85 });
-            
+            // --- REPLACE FROM HERE ---
+const qDiv = document.getElementById("qrcode");
+qDiv.innerHTML = "";
+
+// 1. Create the detailed text string for the QR
+let qrText = `MD JEWELLERS\n`;
+qrText += `Bill No: ${document.getElementById('inBillNo').value}\n`;
+qrText += `Customer: ${document.getElementById('inName').value}\n`;
+qrText += `Address: ${document.getElementById('inAddress').value}\n`;
+qrText += `Items:\n`;
+
+// Loop through added items to show net weight in the QR scan
+items.forEach((it, i) => {
+    qrText += `${i+1}. ${it.desc} (Net: ${it.net.toFixed(3)}g)\n`;
+});
+
+qrText += `Total Amount: ${sub.toFixed(2)}\n`;
+qrText += `Net Payable: ${netAmount}`;
+
+// 2. Generate the QR code with the new detailed text
+new QRCode(qDiv, { 
+    text: qrText, 
+    width: 85, 
+    height: 85 
+});
+// --- TO HERE ---
             setTimeout(() => window.print(), 500);
         }
 
