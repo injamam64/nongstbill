@@ -8,7 +8,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Times New Roman', serif; background-color: #f4f7f6; color: #000; }
-
+        
         /* FORM STYLES */
         #form-container { max-width: 850px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .form-row { display: flex; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
@@ -24,28 +24,32 @@
         .bill-page { width: 148mm; min-height: 210mm; margin: 20px auto; background: white; padding: 8mm; border: 1px solid #000; position: relative; }
         .header-box { border: 2px solid #000; padding: 6px; background-color: #fcece8 !important; text-align: center; margin-bottom: 5px; }
         .shop-name { font-size: 20pt; font-weight: 900; margin: 0; }
-        .header-logos { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; margin-bottom: 5px; }
-        .header-logos img { height: 35px; }
         
         .contact-row { display: flex; justify-content: space-between; font-size: 9pt; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .meta-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; font-size: 9.5pt; gap: 5px; border-bottom: 1px solid #000; padding-bottom: 8px; margin-bottom: 10px; }
 
-        /* Table */
         .items-table { width: 100%; border-collapse: collapse; }
         .items-table th, .items-table td { border: 1px solid #000; padding: 5px; text-align: center; font-size: 8.5pt; }
         .items-table th { background: #f2f2f2; }
 
-        /* Summary */
         .summary-section { display: flex; justify-content: space-between; margin-top: 12px; }
         .words-container { width: 55%; border: 1px solid #000; padding: 6px; font-size: 8.5pt; background: #f9f9f9 !important; min-height: 60px; text-transform: uppercase; }
         .totals-container { width: 42%; text-align: right; font-size: 10pt; }
         .row-flex { display: flex; justify-content: space-between; margin-bottom: 2px; }
         .net-border { border-top: 2px solid #000; padding-top: 4px; font-weight: bold; font-size: 11pt; margin-top: 4px; }
 
-        /* Footer */
-        .footer-wrap { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+        /* Footer Adjustments */
+        .footer-wrap { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 40px; }
         #qrcode { width: 85px; height: 85px; border: 1px solid #eee; padding: 4px; }
-        .signature-box { text-align: right; margin-top: 50px; font-size: 9.5pt; font-weight: bold; }
+        
+        /* This pushes the signature down as requested */
+        .signature-box { 
+            text-align: right; 
+            font-size: 9.5pt; 
+            font-weight: bold; 
+            margin-top: 80px; 
+            width: 200px;
+        }
 
         @media print {
             .no-print { display: none !important; }
@@ -58,14 +62,12 @@
 <body>
 
     <div id="form-container" class="no-print">
-        <h2 style="margin-bottom:15px; color:#2c3e50;">M.D. Jewellers Entry Panel</h2>
-        
+        <h2>M.D. Jewellers Entry Panel</h2>
         <div class="form-row">
             <div class="form-group"><label>Bill No</label><input type="text" id="inBillNo"></div>
             <div class="form-group"><label>Customer Name</label><input type="text" id="inName"></div>
             <div class="form-group"><label>Customer Address</label><input type="text" id="inAddress"></div>
         </div>
-
         <div class="form-row">
             <div class="form-group">
                 <label>Metal Type</label>
@@ -77,29 +79,23 @@
             <div class="form-group"><label>Current Rate (per gm)</label><input type="number" id="inMetalRate"></div>
             <div class="form-group"><label>Bill Date/Time</label><input type="datetime-local" id="inDate"></div>
         </div>
-
         <fieldset>
             <legend>Item List</legend>
             <div class="form-row">
-                <input style="flex:2" type="text" id="inDesc" placeholder="Description (e.g. Necklace)">
+                <input style="flex:2" type="text" id="inDesc" placeholder="Description">
                 <input type="text" id="inPurity" value="22K916">
             </div>
             <div class="form-row">
                 <div class="form-group"><label>Gross Wt (g)</label><input type="number" id="inGross" step="0.001"></div>
                 <div class="form-group"><label>Net Wt (g)</label><input type="number" id="inNetWt" step="0.001"></div>
-                
-                <div class="form-group"><label>Making Chg</label><input type="number" id="inMaking" ></div>
+                <div class="form-group"><label>Making Chg</label><input type="number" id="inMaking" value="0"></div>
             </div>
             <button class="add-btn" onclick="addItem()">+ ADD ITEM</button>
         </fieldset>
-
         <div class="form-row">
-            <div class="form-group"><label>Hallmark Charge (₹)</label><input type="number" id="inHallmark"></div>
-            <div class="form-group"><label>Discount (₹)</label><input type="number" id="inDiscount" ></div>
-            <div class="form-group">
-                <label>Payment Method</label>
-                <select id="inPay"><option>CASH</option><option>UPI</option><option>MIXED</option></select>
-            </div>
+            <div class="form-group"><label>Hallmark Charge (₹)</label><input type="number" id="inHallmark" value="0"></div>
+            <div class="form-group"><label>Discount (₹)</label><input type="number" id="inDiscount" value="0"></div>
+            <div class="form-group"><label>Payment Method</label><select id="inPay"><option>CASH</option><option>UPI</option></select></div>
         </div>
         <button class="print-btn" onclick="generateAndPrint()">GENERATE & PRINT BILL</button>
     </div>
@@ -107,70 +103,40 @@
     <div class="bill-page" id="bill-ui">
         <div class="header-box">
             <h1 class="shop-name">M.D. JEWELLERS</h1>
-            <p style="font-weight:bold; letter-spacing:1px; font-size:9pt;">ESTIMATE / BILL</p>
-        </div>
-        <div class="header-logos">
-            <img src="md-logo.png" alt="">
-            <img src="bis-logo.png" alt="">
+            <p>ESTIMATE / BILL</p>
         </div>
         <div class="contact-row">
-            <div>Address: Illambazar, Dubrajpur Road, Birbhum<br>Contact: +91 8642067952</div>
-            <div style="text-align:right;"><strong>BILL NO:</strong> <span id="outBillNo" style="color:red;"></span></div>
+            <div>Address: Illambazar, Dubrajpur Road, Birbhum<br>Contact: +91 9735433230</div>
+            <div><strong>BILL NO:</strong> <span id="outBillNo" style="color:red;"></span></div>
         </div>
-
         <div class="meta-grid">
-            <div>
-                <strong>Name:</strong> <span id="outName"></span><br>
-                <strong>Address:</strong> <span id="outAddress"></span>
-            </div>
-            <div style="text-align: right;">
-                <strong>Date:</strong> <span id="outDate"></span><br>
-                <strong><span id="outMetalLabel">Gold</span> Rate:</strong> ₹<span id="outMetalRate"></span>
-            </div>
+            <div><strong>Name:</strong> <span id="outName"></span><br><strong>Address:</strong> <span id="outAddress"></span></div>
+            <div style="text-align: right;"><strong>Date:</strong> <span id="outDate"></span><br><strong><span id="outMetalLabel">Gold</span> Rate:</strong> ₹<span id="outMetalRateDisplay"></span></div>
         </div>
-
         <table class="items-table">
-            <thead>
-                <tr>
-                    <th>SL</th>
-                    <th style="width:30%">DESCRIPTION</th>
-                    <th>PURITY</th>
-                    <th>GROSS WT</th>
-                    <th>NET WT</th>
-                    <th>RATE</th>
-                    <th>MAKING</th>
-                    <th>TOTAL</th>
-                </tr>
-            </thead>
+            <thead><tr><th>SL</th><th style="width:30%">DESCRIPTION</th><th>PURITY</th><th>GROSS WT</th><th>NET WT</th><th>RATE</th><th>MAKING</th><th>TOTAL</th></tr></thead>
             <tbody id="outItemsBody"></tbody>
         </table>
-
         <div class="summary-section">
-            <div class="words-container">
-                <strong>AMOUNT IN WORDS:</strong><br>
-                <span id="outWords"></span>
-            </div>
+            <div class="words-container"><strong>AMOUNT IN WORDS:</strong><br><span id="outWords"></span></div>
             <div class="totals-container">
                 <div class="row-flex"><span>SUB TOTAL:</span><span id="outSub">0.00</span></div>
                 <div class="row-flex"><span>HALLMARK CHG:</span><span id="outHallmark">0.00</span></div>
                 <div class="row-flex"><span>DISCOUNT:</span><span id="outDisc">0.00</span></div>
                 <div class="row-flex net-border"><span>NET PAYABLE:</span><span id="outNet">0.00</span></div>
-                <div style="font-size: 8pt; margin-top:3px;">PAID VIA: <span id="outPayMethod"></span></div>
             </div>
         </div>
-
+        
         <div class="footer-wrap">
             <div id="qrcode"></div>
             <div class="signature-box">
-                <div style="margin-bottom:40px;">__________________________</div>
-                <div>FOR M.D. JEWELLERS</div>
+                <div style="margin-bottom:10px; border-top: 1px solid #000; padding-top: 5px;">FOR M.D. JEWELLERS</div>
             </div>
         </div>
     </div>
 
     <script>
         let items = [];
-
         window.onload = () => {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -181,77 +147,50 @@
             const desc = document.getElementById('inDesc').value;
             const gross = parseFloat(document.getElementById('inGross').value) || 0;
             const net = parseFloat(document.getElementById('inNetWt').value) || 0;
-            const rate = parseFloat(document.getElementById('inMetalRate').value) || 0;
             const making = parseFloat(document.getElementById('inMaking').value) || 0;
             const purity = document.getElementById('inPurity').value;
+            const rate = parseFloat(document.getElementById('inMetalRate').value) || 0;
 
             if (!desc || net <= 0) return alert("Please fill Description and Net Weight");
             
             const rowTotal = (net * rate) + making;
             items.push({ desc, purity, gross, net, rate, making, rowTotal });
-            
             updateTable();
-            // Clear inputs
-            document.getElementById('inDesc').value = '';
-            document.getElementById('inGross').value = '';
+            document.getElementById('inDesc').value = ''; 
+            document.getElementById('inGross').value = ''; 
             document.getElementById('inNetWt').value = '';
-            document.getElementById('inDesc').focus();
         }
 
         function updateTable() {
             const tbody = document.getElementById('outItemsBody');
             tbody.innerHTML = '';
             items.forEach((it, i) => {
-                tbody.innerHTML += `<tr>
-                    <td>${i+1}</td>
-                    <td style="text-align:left;">${it.desc}</td>
-                    <td>${it.purity}</td>
-                    <td>${it.gross.toFixed(3)}</td>
-                    <td>${it.net.toFixed(3)}</td>
-                    <td>${it.rate}</td>
-                    <td>${it.making}</td>
-                    <td>${it.rowTotal.toFixed(2)}</td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>${i+1}</td><td style="text-align:left;">${it.desc}</td><td>${it.purity}</td><td>${it.gross.toFixed(3)}</td><td>${it.net.toFixed(3)}</td><td>${it.rate}</td><td>${it.making}</td><td>${it.rowTotal.toFixed(2)}</td></tr>`;
             });
         }
 
         function generateAndPrint() {
-            if (items.length === 0) return alert("Add at least one item");
-
-            const name = document.getElementById('inName').value || "Valued Customer";
-            const addr = document.getElementById('inAddress').value || "N/A";
-            const mLabel = document.getElementById('inMetalType').value;
-            const mRate = document.getElementById('inMetalRate').value;
-            const dateStr = new Date(document.getElementById('inDate').value).toLocaleString();
-            
             const hallmark = parseFloat(document.getElementById('inHallmark').value) || 0;
             const discount = parseFloat(document.getElementById('inDiscount').value) || 0;
             const sub = items.reduce((a, b) => a + b.rowTotal, 0);
             const netAmount = Math.round(sub + hallmark - discount);
 
-            // UI Update
-            document.getElementById('outBillNo').innerText = document.getElementById('inBillNo').value || "---";
-            document.getElementById('outName').innerText = name;
-            document.getElementById('outAddress').innerText = addr;
-            document.getElementById('outMetalLabel').innerText = mLabel;
-            document.getElementById('outMetalRate').innerText = mRate;
-            document.getElementById('outDate').innerText = dateStr;
+            document.getElementById('outBillNo').innerText = document.getElementById('inBillNo').value;
+            document.getElementById('outName').innerText = document.getElementById('inName').value;
+            document.getElementById('outAddress').innerText = document.getElementById('inAddress').value;
+            document.getElementById('outMetalLabel').innerText = document.getElementById('inMetalType').value;
+            document.getElementById('outMetalRateDisplay').innerText = document.getElementById('inMetalRate').value;
+            document.getElementById('outDate').innerText = new Date(document.getElementById('inDate').value).toLocaleString();
             document.getElementById('outSub').innerText = sub.toFixed(2);
             document.getElementById('outHallmark').innerText = hallmark.toFixed(2);
             document.getElementById('outDisc').innerText = discount.toFixed(2);
             document.getElementById('outNet').innerText = netAmount.toFixed(2);
-            document.getElementById('outPayMethod').innerText = document.getElementById('inPay').value;
             document.getElementById('outWords').innerText = numberToWords(netAmount) + " ONLY";
-
-            // QR Content
-            let qrText = `Buyer: ${name}\nMetal: ${mLabel} @ ${mRate}\nItems:\n`;
-            items.forEach((it, i) => qrText += `${i+1}. ${it.desc} | Net: ${it.net}g | Total: ${it.rowTotal}\n`);
-            qrText += `Net Payable: ${netAmount}`;
 
             const qDiv = document.getElementById("qrcode");
             qDiv.innerHTML = "";
-            new QRCode(qDiv, { text: qrText, width: 85, height: 85 });
-
+            new QRCode(qDiv, { text: "MD Jewellers - Bill No: " + document.getElementById('inBillNo').value + " - Total: " + netAmount, width: 85, height: 85 });
+            
             setTimeout(() => window.print(), 500);
         }
 
