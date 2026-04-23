@@ -87,7 +87,7 @@
             <div class="form-row">
                 <div class="form-group"><label>Gross Wt (g)</label><input type="number" id="inGross" step="0.001"></div>
                 <div class="form-group"><label>Net Wt (g)</label><input type="number" id="inNetWt" step="0.001"></div>
-                <div class="form-group"><label>Rate (per Gram)</label><input type="number" id="inRateUsed"></div>
+                
                 <div class="form-group"><label>Making Chg</label><input type="number" id="inMaking" ></div>
             </div>
             <button class="add-btn" onclick="addItem()">+ ADD ITEM</button>
@@ -181,7 +181,7 @@
             const desc = document.getElementById('inDesc').value;
             const gross = parseFloat(document.getElementById('inGross').value) || 0;
             const net = parseFloat(document.getElementById('inNetWt').value) || 0;
-            const rate = parseFloat(document.getElementById('inRateUsed').value) || 0;
+            const rate = parseFloat(document.getElementById('inMetalRate').value) || 0;
             const making = parseFloat(document.getElementById('inMaking').value) || 0;
             const purity = document.getElementById('inPurity').value;
 
