@@ -122,6 +122,7 @@
             </div>
         </div>
         <button class="print-btn" onclick="generateAndPrint()">GENERATE & PRINT BILL</button>
+      <button class="add-btn" style="background: #8e44ad;" onclick="saveToSheet()">ADD TO SHEET</button>
     </div>
 
     <div class="bill-page" id="bill-ui">
@@ -275,6 +276,42 @@ new QRCode(qDiv, {
             if (n > 0) str += convert(n);
             return str.trim().toUpperCase();
         }
+      async function saveToSheet() {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxc6z_583bFFzqTZ7RhaZxm65ft9qhQweSxYqb2PES7qKmlHF_kD29Y1B4YppIziXeR/exec';
+    
+    // Collect data from the form and items array
+    const data = {
+        billNo: document.getElementById('inBillNo').value,
+        date: document.getElementById('inDate').value,
+        name: document.getElementById('inName').value,
+        address: document.getElementById('inAddress').value,
+        metalType: document.getElementById('inMetalType').value,
+        rate: document.getElementById('inMetalRate').value,
+        // Joins multiple items into one string for the spreadsheet cell
+        itemDesc: items.map(it => it.desc).join(", "),
+        netWt: items.reduce((a, b) => a + b.net, 0).toFixed(3),
+        making: items.reduce((a, b) => a + b.making, 0),
+        hallmark: document.getElementById('inHallmark').value || 0,
+        card: document.getElementById('inCardCharge').value || 0,
+        discount: document.getElementById('inDiscount').value || 0,
+        total: document.getElementById('outNet').innerText, // Uses the calculated total
+        amtPaid: document.getElementById('inAmtPaid').value || 0,
+        paidVia: document.getElementById('inPay').value
+    };
+
+    try {
+        const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            alert("Data successfully added to " + new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
+        }
+    } catch (error) {
+        console.error('Error!', error.message);
+        alert("Failed to add data. Check console.");
+    }
+}
     </script>
 </body>
 </html>
