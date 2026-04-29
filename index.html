@@ -33,16 +33,29 @@
         .items-table th { background: #f2f2f2; }
 
         .summary-section { display: flex; justify-content: space-between; margin-top: 12px; }
-        .words-container { width: 55%; border: 1px solid #000; padding: 6px; font-size: 8.5pt; background: #f9f9f9 !important; min-height: 60px; text-transform: uppercase; }
+        .words-container { width: 55%; border: 1px solid #000; padding: 6px; font-size: 8.5pt; background: #e8f5e9 !important; min-height: 20px; text-transform: uppercase; }
         .totals-container { width: 42%; text-align: right; font-size: 10pt; }
         .row-flex { display: flex; justify-content: space-between; margin-bottom: 2px; }
         .net-border { border-top: 2px solid #000; padding-top: 4px; font-weight: bold; font-size: 11pt; margin-top: 4px; }
+        .paid-info { margin-top: 5px; font-size: 10pt; border-top: 1px dashed #ccc; padding-top: 5px; }
 
         /* Footer Adjustments */
-        .footer-wrap { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 40px; }
-        #qrcode { width: 85px; height: 85px; border: 1px solid #eee; padding: 4px; }
+        .footer-wrap { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-end; /* Align to the bottom of the section */
+    margin-top: 50px;      /* Increase space from the totals section */
+    padding-bottom: 20px; 
+}
+      #qrcode { 
+    width: 85px; 
+    height: 85px; 
+    background: #fff; /* Ensure white background */
+    padding: 10px;    /* Increase white space around the code */
+    border: 1px solid #ddd; 
+    display: inline-block;
+}
         
-        /* This pushes the signature down as requested */
         .signature-box { 
             text-align: right; 
             font-size: 9.5pt; 
@@ -94,8 +107,19 @@
         </fieldset>
         <div class="form-row">
             <div class="form-group"><label>Hallmark Charge (₹)</label><input type="number" id="inHallmark"></div>
+            <div class="form-group"><label>Card Charge (₹)</label><input type="number" id="inCardCharge"></div>
             <div class="form-group"><label>Discount (₹)</label><input type="number" id="inDiscount"></div>
-            <div class="form-group"><label>Payment Method</label><select id="inPay"><option>CASH</option><option>UPI</option></select></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Amount Paid (₹)</label><input type="number" id="inAmtPaid"></div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="inPay">
+                    <option value="CASH">CASH</option>
+                    <option value="UPI">UPI</option>
+                    <option value="CARD">CARD</option>
+                </select>
+            </div>
         </div>
         <button class="print-btn" onclick="generateAndPrint()">GENERATE & PRINT BILL</button>
     </div>
@@ -103,7 +127,7 @@
     <div class="bill-page" id="bill-ui">
         <div class="header-box">
             <h1 class="shop-name">M.D. JEWELLERS</h1>
-            <p>ESTIMATE / BILL</p>
+            <p>INVOICE / BILL</p>
         </div>
         <div class="contact-row">
             <div>Address: Illambazar, Dubrajpur Road, Birbhum<br>Contact: +91 8642067952</div>
@@ -111,7 +135,7 @@
         </div>
         <div class="meta-grid">
             <div><strong>Name:</strong> <span id="outName"></span><br><strong>Address:</strong> <span id="outAddress"></span></div>
-            <div style="text-align: right;"><strong>Date:</strong> <span id="outDate"></span><br><strong><span id="outMetalLabel">Gold</span> Rate:</strong> ₹<span id="outMetalRateDisplay"></span></div>
+            <div style="text-align: right;"><strong>Date:</strong> <span id="outDate"></span><br><strong><span id="outMetalLabel">Gold</span> Rate(/g):</strong> ₹<span id="outMetalRateDisplay"></span></div>
         </div>
         <table class="items-table">
             <thead><tr><th>SL</th><th style="width:30%">DESCRIPTION</th><th>PURITY</th><th>GROSS WT</th><th>NET WT</th><th>RATE</th><th>MAKING</th><th>TOTAL</th></tr></thead>
@@ -122,8 +146,13 @@
             <div class="totals-container">
                 <div class="row-flex"><span>SUB TOTAL:</span><span id="outSub">0.00</span></div>
                 <div class="row-flex"><span>HALLMARK CHG:</span><span id="outHallmark">0.00</span></div>
+                <div class="row-flex"><span>CARD CHG:</span><span id="outCardCharge">0.00</span></div>
                 <div class="row-flex"><span>DISCOUNT:</span><span id="outDisc">0.00</span></div>
                 <div class="row-flex net-border"><span>NET PAYABLE:</span><span id="outNet">0.00</span></div>
+                <div class="paid-info">
+                    <div class="row-flex"><span>AMOUNT PAID:</span>₹<span id="outAmtPaid">0.00</span></div>
+                    <div class="row-flex"><span>PAID VIA:</span><span id="outPayMethod"></span></div>
+                </div>
             </div>
         </div>
         
@@ -171,9 +200,11 @@
 
         function generateAndPrint() {
             const hallmark = parseFloat(document.getElementById('inHallmark').value) || 0;
+            const cardCharge = parseFloat(document.getElementById('inCardCharge').value) || 0;
             const discount = parseFloat(document.getElementById('inDiscount').value) || 0;
+            const amtPaid = parseFloat(document.getElementById('inAmtPaid').value) || 0;
             const sub = items.reduce((a, b) => a + b.rowTotal, 0);
-            const netAmount = Math.round(sub + hallmark - discount);
+            const netAmount = Math.round(sub + hallmark + cardCharge - discount);
 
             document.getElementById('outBillNo').innerText = document.getElementById('inBillNo').value;
             document.getElementById('outName').innerText = document.getElementById('inName').value;
@@ -181,13 +212,18 @@
             document.getElementById('outMetalLabel').innerText = document.getElementById('inMetalType').value;
             document.getElementById('outMetalRateDisplay').innerText = document.getElementById('inMetalRate').value;
             document.getElementById('outDate').innerText = new Date(document.getElementById('inDate').value).toLocaleString();
+            
             document.getElementById('outSub').innerText = sub.toFixed(2);
             document.getElementById('outHallmark').innerText = hallmark.toFixed(2);
+            document.getElementById('outCardCharge').innerText = cardCharge.toFixed(2);
             document.getElementById('outDisc').innerText = discount.toFixed(2);
             document.getElementById('outNet').innerText = netAmount.toFixed(2);
             document.getElementById('outWords').innerText = numberToWords(netAmount) + " ONLY";
+            
+            document.getElementById('outAmtPaid').innerText = amtPaid.toFixed(2);
+            document.getElementById('outPayMethod').innerText = document.getElementById('inPay').value;
 
-            // --- REPLACE FROM HERE ---
+          // --- REPLACE FROM HERE ---
 const qDiv = document.getElementById("qrcode");
 qDiv.innerHTML = "";
 
@@ -209,10 +245,12 @@ qrText += `Net Payable: ${netAmount}`;
 // 2. Generate the QR code with the new detailed text
 new QRCode(qDiv, { 
     text: qrText, 
-    width: 85, 
-    height: 85 
+    width: 128,  /* Increased size for better print clarity */
+    height: 128, 
+    correctLevel : QRCode.CorrectLevel.H /* High error correction */
 });
 // --- TO HERE ---
+
             setTimeout(() => window.print(), 500);
         }
 
@@ -220,7 +258,6 @@ new QRCode(qDiv, {
             if (n === 0) return "ZERO";
             const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
             const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-            
             const convert = (num) => {
                 let res = "";
                 if (num > 99) { res += a[Math.floor(num / 100)] + " Hundred "; num %= 100; }
@@ -228,12 +265,10 @@ new QRCode(qDiv, {
                 else { res += a[num]; }
                 return res;
             }
-
             let str = "";
             let cr = Math.floor(n / 10000000); n %= 10000000;
             let lk = Math.floor(n / 100000); n %= 100000;
             let th = Math.floor(n / 1000); n %= 1000;
-
             if (cr > 0) str += convert(cr) + " Crore ";
             if (lk > 0) str += convert(lk) + " Lakh ";
             if (th > 0) str += convert(th) + " Thousand ";
