@@ -21,10 +21,64 @@
         .print-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; font-size: 1.1em; font-weight: bold; cursor: pointer; border-radius: 4px; }
 
         /* BILL PAGE STYLES */
-        .bill-page { width: 148mm; min-height: 210mm; margin: 20px auto; background: white; padding: 8mm; border: 1px solid #000; position: relative; }
-        .header-box { border: 2px solid #000; padding: 6px; background-color: #fcece8 !important; text-align: center; margin-bottom: 5px; }
-        .shop-name { font-size: 20pt; font-weight: 900; margin: 0; }
+        .bill-page { 
+            width: 148mm; 
+            min-height: 210mm; 
+            margin: 20px auto; 
+            background: white; 
+            padding: 0mm 0mm 14mm 0mm; /* Adjusted to let custom header extend edge-to-edge */
+            border: 1px solid #000; 
+            position: relative; 
+        }
+
+        /* CUSTOM GREEN GEOMETRIC HEADER DESIGN */
+        .header-box { 
+            position: relative;
+            width: 100%;
+            height: 38mm; 
+            background: #ffffff;
+            padding: 12mm 8mm 4mm 24mm; /* Pushed content right and down to look premium */
+            text-align: right; /* Aligns business text professionally to the right side */
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: none;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Top Solid Green Bar */
+        .header-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5mm;
+            background-color: #27ae60 !important;
+        }
+
+        /* Layered Diagonal Ribbons (Corner Design Accent) */
+        .header-box::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50mm;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                #a2f1b4 0%, #a2f1b4 32%, 
+                #2ecc71 32%, #2ecc71 42%, 
+                #27ae60 42%, #27ae60 62%, 
+                transparent 62%
+            ) !important;
+        }
+
+        .shop-name { font-size: 24pt; font-weight: 900; margin: 0; color: #1e272e; letter-spacing: 1px; }
+        .header-box p { font-size: 11pt; font-weight: bold; margin-top: 2px; color: #27ae60; letter-spacing: 3px; }
         
+        /* Adjusted bill padding internally since header is full-bleed */
+        .bill-body-padding { padding: 0 8mm; }
+
         .contact-row { display: flex; justify-content: space-between; font-size: 10pt; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .meta-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; font-size: 9.5pt; gap: 5px; border-bottom: 1px solid #000; padding-bottom: 8px; margin-bottom: 10px; }
 
@@ -32,36 +86,56 @@
         .items-table th, .items-table td { border: 1px solid #000; padding: 5px; text-align: center; font-size: 8.5pt; }
         .items-table th { background: #f2f2f2; }
 
-        .summary-section { display: flex; justify-content: space-between; margin-top: 12px; }
-        .words-container { width: 55%; border: 1px solid #000; padding: 6px; font-size: 8.5pt; background: #e8f5e9 !important; min-height: 20px; text-transform: uppercase; }
-        .totals-container { width: 42%; text-align: right; font-size: 10pt; }
+        /* Summary Section adjustments */
+        .summary-section { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 12px; }
+        .words-container { width: 48%; border: 1px solid #000; padding: 6px; font-size: 8.5pt; background: #e8f5e9 !important; min-height: 20px; text-transform: uppercase; }
+        .totals-container { width: 48%; text-align: right; font-size: 10pt; }
         .row-flex { display: flex; justify-content: space-between; margin-bottom: 2px; }
-        .net-border { border-top: 2px solid #000; padding-top: 4px; font-weight: bold; font-size: 11pt; margin-top: 4px; }
+        
+        /* NET PAYABLE: Dark Green Color style */
+        .net-border { border-top: 2px solid #000; padding-top: 4px; font-weight: bold; font-size: 11pt; margin-top: 4px; color: #1b5e20 !important; }
+        
         .paid-info { margin-top: 5px; font-size: 10pt; border-top: 1px dashed #ccc; padding-top: 5px; }
+        
+        /* AMOUNT PAID: Bold and Blue style */
+        .amount-paid-blue { font-weight: bold !important; color: #0d47a1 !important; }
 
         /* Footer Adjustments */
         .footer-wrap { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: flex-end; /* Align to the bottom of the section */
-    margin-top: 50px;      /* Increase space from the totals section */
-    padding-bottom: 20px; 
-}
-      #qrcode { 
-    width: 85px; 
-    height: 85px; 
-    background: #fff; /* Ensure white background */
-    padding: 10px;    /* Increase white space around the code */
-    border: 1px solid #ddd; 
-    display: inline-block;
-}
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            margin-top: 40px;      
+            padding-bottom: 10px; 
+        }
+        #qrcode { 
+            width: 85px; 
+            height: 85px; 
+            background: #fff; 
+            padding: 10px;    
+            border: 1px solid #ddd; 
+            display: inline-block;
+        }
         
         .signature-box { 
             text-align: right; 
             font-size: 9.5pt; 
             font-weight: bold; 
-            margin-top: 80px; 
+            margin-top: 60px; 
             width: 200px;
+        }
+
+        /* 3mm Solid Bottom Borderless Color Strip (Matching the Green Theme) */
+        .bottom-color-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3mm;
+            background-color: #27ae60 !important;
+            border: none;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         @media print {
@@ -105,13 +179,20 @@
             </div>
             <button class="add-btn" onclick="addItem()">+ ADD ITEM</button>
         </fieldset>
+        
         <div class="form-row">
             <div class="form-group"><label>Hallmark Charge (₹)</label><input type="number" id="inHallmark"></div>
+            <div class="form-group"><label>Custom Charge Name (e.g. Gala)</label><input type="text" id="inCustomName" placeholder="Gala"></div>
+            <div class="form-group"><label>Custom Charge Amt (₹)</label><input type="number" id="inCustomAmount"></div>
+        </div>
+        
+        <div class="form-row">
             <div class="form-group"><label>Card Charge (₹)</label><input type="number" id="inCardCharge"></div>
             <div class="form-group"><label>Discount (₹)</label><input type="number" id="inDiscount"></div>
-        </div>
-        <div class="form-row">
             <div class="form-group"><label>Amount Paid (₹)</label><input type="number" id="inAmtPaid"></div>
+        </div>
+        
+        <div class="form-row">
             <div class="form-group">
                 <label>Payment Method</label>
                 <select id="inPay">
@@ -122,7 +203,7 @@
             </div>
         </div>
         <button class="print-btn" onclick="generateAndPrint()">GENERATE & PRINT BILL</button>
-      <button class="add-btn" style="background: #8e44ad;" onclick="saveToSheet()">ADD TO SHEET</button>
+        <button class="add-btn" style="background: #8e44ad;" onclick="saveToSheet()">ADD TO SHEET</button>
     </div>
 
     <div class="bill-page" id="bill-ui">
@@ -130,39 +211,49 @@
             <h1 class="shop-name">M.D. JEWELLERS</h1>
             <p>INVOICE / BILL</p>
         </div>
-        <div class="contact-row">
-            <div>Address: Illambazar, Dubrajpur Road, Birbhum<br>Contact: +91 8642067952</div>
-            <div><strong>BILL NO:</strong> <span id="outBillNo" style="color:red;"></span></div>
-        </div>
-        <div class="meta-grid">
-            <div><strong>Name:</strong> <span id="outName"></span><br><strong>Address:</strong> <span id="outAddress"></span></div>
-            <div style="text-align: right;"><strong>Date:</strong> <span id="outDate"></span><br><strong><span id="outMetalLabel">Gold</span> Rate(/g):</strong> ₹<span id="outMetalRateDisplay"></span></div>
-        </div>
-        <table class="items-table">
-            <thead><tr><th>SL</th><th style="width:30%">DESCRIPTION</th><th>PURITY</th><th>GROSS WT</th><th>NET WT</th><th>RATE</th><th>MAKING</th><th>TOTAL</th></tr></thead>
-            <tbody id="outItemsBody"></tbody>
-        </table>
-        <div class="summary-section">
-            <div class="words-container"><strong>AMOUNT IN WORDS:</strong><br><span id="outWords"></span></div>
-            <div class="totals-container">
-                <div class="row-flex"><span>SUB TOTAL:</span><span id="outSub">0.00</span></div>
-                <div class="row-flex"><span>HALLMARK CHG:</span><span id="outHallmark">0.00</span></div>
-                <div class="row-flex"><span>CARD CHARGE :</span><span id="outCardCharge">0.00</span></div>
-                <div class="row-flex"><span>DISCOUNT:</span><span id="outDisc">0.00</span></div>
-                <div class="row-flex net-border"><span>NET PAYABLE:</span><span id="outNet">0.00</span></div>
-                <div class="paid-info">
-                    <div class="row-flex"><span>AMOUNT PAID:</span>₹<span id="outAmtPaid">0.00</span></div>
-                    <div class="row-flex"><span>PAID VIA:</span><span id="outPayMethod"></span></div>
+
+        <div class="bill-body-padding">
+            <div class="contact-row">
+                <div>Address: Illambazar, Dubrajpur Road, Birbhum<br>Contact: +91 8642067952</div>
+                <div><strong>BILL NO:</strong> <span id="outBillNo" style="color:red;"></span></div>
+            </div>
+            <div class="meta-grid">
+                <div><strong>Name:</strong> <span id="outName"></span><br><strong>Address:</strong> <span id="outAddress"></span></div>
+                <div style="text-align: right;"><strong>Date:</strong> <span id="outDate"></span><br><strong><span id="outMetalLabel">Gold</span> Rate(/g):</strong> ₹<span id="outMetalRateDisplay"></span></div>
+            </div>
+            <table class="items-table">
+                <thead><tr><th>SL</th><th style="width:30%">DESCRIPTION</th><th>PURITY</th><th>GROSS WT</th><th>NET WT</th><th>RATE</th><th>MAKING</th><th>TOTAL</th></tr></thead>
+                <tbody id="outItemsBody"></tbody>
+            </table>
+            <div class="summary-section">
+                <div class="words-container"><strong>AMOUNT IN WORDS:</strong><br><span id="outWords"></span></div>
+                <div class="totals-container">
+                    <div class="row-flex"><span>SUB TOTAL:</span><span id="outSub">0.00</span></div>
+                    <div class="row-flex"><span>HALLMARK CHG:</span><span id="outHallmark">0.00</span></div>
+                    
+                    <div id="outCustomRow" class="row-flex" style="display: none;">
+                        <span id="outCustomLabel">CUSTOM:</span><span id="outCustomDisplay">0.00</span>
+                    </div>
+                    
+                    <div class="row-flex"><span>CARD CHARGE :</span><span id="outCardCharge">0.00</span></div>
+                    <div class="row-flex"><span>DISCOUNT:</span><span id="outDisc">0.00</span></div>
+                    <div class="row-flex net-border"><span>NET PAYABLE:</span><span id="outNet">0.00</span></div>
+                    <div class="paid-info">
+                        <div class="row-flex amount-paid-blue"><span>AMOUNT PAID:</span><span>₹<span id="outAmtPaid">0.00</span></span></div>
+                        <div class="row-flex"><span>PAID VIA:</span><span id="outPayMethod"></span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-wrap">
+                <div id="qrcode"></div>
+                <div class="signature-box">
+                    <div style="margin-bottom:10px; border-top: 1px solid #000; padding-top: 5px;">AUTHORIZED SIGN WITH SEAL</div>
                 </div>
             </div>
         </div>
-        
-        <div class="footer-wrap">
-            <div id="qrcode"></div>
-            <div class="signature-box">
-                <div style="margin-bottom:10px; border-top: 1px solid #000; padding-top: 5px;">FOR M.D. JEWELLERS</div>
-            </div>
-        </div>
+
+        <div class="bottom-color-bar"></div>
     </div>
 
     <script>
@@ -204,8 +295,23 @@
             const cardCharge = parseFloat(document.getElementById('inCardCharge').value) || 0;
             const discount = parseFloat(document.getElementById('inDiscount').value) || 0;
             const amtPaid = parseFloat(document.getElementById('inAmtPaid').value) || 0;
+            
+            const customName = document.getElementById('inCustomName').value.trim();
+            const customAmount = parseFloat(document.getElementById('inCustomAmount').value) || 0;
+            
             const sub = items.reduce((a, b) => a + b.rowTotal, 0);
-            const netAmount = Math.round(sub + hallmark + cardCharge - discount);
+            
+            let calculatedCustomAmt = 0;
+            if (customName !== "" && customAmount > 0) {
+                document.getElementById('outCustomLabel').innerText = customName.toUpperCase() + ":";
+                document.getElementById('outCustomDisplay').innerText = customAmount.toFixed(2);
+                document.getElementById('outCustomRow').style.display = "flex";
+                calculatedCustomAmt = customAmount;
+            } else {
+                document.getElementById('outCustomRow').style.display = "none";
+            }
+
+            const netAmount = Math.round(sub + hallmark + calculatedCustomAmt + cardCharge - discount);
 
             document.getElementById('outBillNo').innerText = document.getElementById('inBillNo').value;
             document.getElementById('outName').innerText = document.getElementById('inName').value;
@@ -224,33 +330,31 @@
             document.getElementById('outAmtPaid').innerText = amtPaid.toFixed(2);
             document.getElementById('outPayMethod').innerText = document.getElementById('inPay').value;
 
-          // --- REPLACE FROM HERE ---
-const qDiv = document.getElementById("qrcode");
-qDiv.innerHTML = "";
+            const qDiv = document.getElementById("qrcode");
+            qDiv.innerHTML = "";
 
-// 1. Create the detailed text string for the QR
-let qrText = `MD JEWELLERS\n`;
-qrText += `Bill No: ${document.getElementById('inBillNo').value}\n`;
-qrText += `Customer: ${document.getElementById('inName').value}\n`;
-qrText += `Address: ${document.getElementById('inAddress').value}\n`;
-qrText += `Items:\n`;
+            let qrText = `MD JEWELLERS\n`;
+            qrText += `Bill No: ${document.getElementById('inBillNo').value}\n`;
+            qrText += `Customer: ${document.getElementById('inName').value}\n`;
+            qrText += `Address: ${document.getElementById('inAddress').value}\n`;
+            qrText += `Items:\n`;
 
-// Loop through added items to show net weight in the QR scan
-items.forEach((it, i) => {
-    qrText += `${i+1}. ${it.desc} (Net: ${it.net.toFixed(3)}g)\n`;
-});
+            items.forEach((it, i) => {
+                qrText += `${i+1}. ${it.desc} (Net: ${it.net.toFixed(3)}g)\n`;
+            });
 
-qrText += `Total Amount: ${sub.toFixed(2)}\n`;
-qrText += `Net Payable: ${netAmount}`;
+            qrText += `Total Amount: ${sub.toFixed(2)}\n`;
+            if (calculatedCustomAmt > 0) {
+                qrText += `${customName}: ${calculatedCustomAmt.toFixed(2)}\n`;
+            }
+            qrText += `Net Payable: ${netAmount}`;
 
-// 2. Generate the QR code with the new detailed text
-new QRCode(qDiv, { 
-    text: qrText, 
-    width: 128,  /* Increased size for better print clarity */
-    height: 128, 
-    correctLevel : QRCode.CorrectLevel.H /* High error correction */
-});
-// --- TO HERE ---
+            new QRCode(qDiv, { 
+                text: qrText, 
+                width: 128,  
+                height: 128, 
+                correctLevel : QRCode.CorrectLevel.H 
+            });
 
             setTimeout(() => window.print(), 500);
         }
@@ -276,46 +380,45 @@ new QRCode(qDiv, {
             if (n > 0) str += convert(n);
             return str.trim().toUpperCase();
         }
-      async function saveToSheet() {
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxc6z_583bFFzqTZ7RhaZxm65ft9qhQweSxYqb2PES7qKmlHF_kD29Y1B4YppIziXeR/exec';
-    
-    const data = {
-        billNo: document.getElementById('outBillNo').innerText,
-        date: document.getElementById('outDate').innerText,
-        name: document.getElementById('outName').innerText,
-        address: document.getElementById('outAddress').innerText,
-        metalType: document.getElementById('inMetalType').value,
-        rate: document.getElementById('outMetalRateDisplay').innerText,
-        itemDesc: items.map(it => it.desc).join(", "),
-        netWt: items.reduce((a, b) => a + b.net, 0).toFixed(3),
-        making: items.reduce((a, b) => a + b.making, 0),
-        hallmark: document.getElementById('inHallmark').value || 0,
-        card: document.getElementById('inCardCharge').value || 0,
-        discount: document.getElementById('inDiscount').value || 0,
-        total: document.getElementById('outNet').innerText,
-        amtPaid: document.getElementById('inAmtPaid').value || 0,
-        paidVia: document.getElementById('inPay').value
-    };
 
-    // Use 'no-cors' to prevent the browser from blocking the Google redirect
-    fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors', 
-        cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(() => {
-        alert("Success! Bill #" + data.billNo + " has been added to the sheet.");
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Failed to add data. Please check your internet connection.");
-    });
+        async function saveToSheet() {
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxc6z_583bFFzqTZ7RhaZxm65ft9qhQweSxYqb2PES7qKmlHF_kD29Y1B4YppIziXeR/exec';
+            
+            const data = {
+                billNo: document.getElementById('outBillNo').innerText,
+                date: document.getElementById('outDate').innerText,
+                name: document.getElementById('outName').innerText,
+                address: document.getElementById('outAddress').innerText,
+                metalType: document.getElementById('inMetalType').value,
+                rate: document.getElementById('outMetalRateDisplay').innerText,
+                itemDesc: items.map(it => it.desc).join(", "),
+                netWt: items.reduce((a, b) => a + b.net, 0).toFixed(3),
+                making: items.reduce((a, b) => a + b.making, 0),
+                hallmark: document.getElementById('inHallmark').value || 0,
+                card: document.getElementById('inCardCharge').value || 0,
+                discount: document.getElementById('inDiscount').value || 0,
+                total: document.getElementById('outNet').innerText,
+                amtPaid: document.getElementById('inAmtPaid').value || 0,
+                paidVia: document.getElementById('inPay').value
+            };
 
-}
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                alert("Success! Bill #" + data.billNo + " has been added to the sheet.");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Failed to add data. Please check your internet connection.");
+            });
+        }
     </script>
 </body>
 </html>
