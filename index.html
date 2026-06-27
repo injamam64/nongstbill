@@ -28,7 +28,7 @@
             min-height: 297mm; 
             margin: 20px auto; 
             background: white; 
-            padding: 0mm 0mm 14mm 0mm; 
+            padding: 0mm 0mm 20mm 0mm; 
             border: 1px solid #000; 
             position: relative; 
         }
@@ -129,7 +129,8 @@
 
         /* Summary Section adjustments */
         .summary-section { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; }
-        .words-container { width: 48%; border: 1px solid #000; padding: 8px; font-size: 9.5pt; background: #e8f5e9 !important; min-height: 25px; text-transform: uppercase; }
+        .left-summary-block { width: 48%; display: flex; flex-direction: column; gap: 10px; }
+        .words-container { width: 100%; border: 1px solid #000; padding: 8px; font-size: 9.5pt; background: #e8f5e9 !important; min-height: 25px; text-transform: uppercase; }
         .totals-container { width: 48%; text-align: right; font-size: 11pt; }
         .row-flex { display: flex; justify-content: space-between; margin-bottom: 4px; }
         
@@ -141,19 +142,36 @@
         /* AMOUNT PAID: Bold and Blue style */
         .amount-paid-blue { font-weight: bold !important; color: #0d47a1 !important; }
 
+        /* Terms and Conditions Styling */
+        .terms-container {
+            font-size: 8.5pt;
+            line-height: 1.3;
+            color: #333;
+            width: 60%;
+        }
+        .terms-container strong {
+            display: block;
+            margin-bottom: 3px;
+            text-decoration: underline;
+        }
+        .terms-container ul {
+            list-style-type: disc;
+            padding-left: 15px;
+        }
+
         /* Footer Adjustments */
         .footer-wrap { 
             display: flex; 
             justify-content: space-between; 
             align-items: flex-end; 
-            margin-top: 60px;      
+            margin-top: 50px;      
             padding-bottom: 15px; 
         }
         #qrcode { 
             width: 95px; 
             height: 95px; 
             background: #fff; 
-            padding: 10px;    
+            padding: 5px;    
             border: 1px solid #ddd; 
             display: inline-block;
         }
@@ -162,17 +180,17 @@
             text-align: right; 
             font-size: 10.5pt; 
             font-weight: bold; 
-            margin-top: 70px; 
+            margin-top: 50px; 
             width: 250px;
         }
 
-        /* Bottom Strip */
+        /* Bottom Strip - Made Wider (8mm) to avoid cutting during printing */
         .bottom-color-bar {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 3mm;
+            height: 8mm;
             background-color: #27ae60 !important;
             border: none;
             -webkit-print-color-adjust: exact !important;
@@ -292,7 +310,11 @@
             </table>
             
             <div class="summary-section">
-                <div class="words-container"><strong>AMOUNT IN WORDS:</strong><br><span id="outWords"></span></div>
+                <!-- Left aligned group containing Words container and the newly aligned QR code -->
+                <div class="left-summary-block">
+                    <div class="words-container"><strong>AMOUNT IN WORDS:</strong><br><span id="outWords"></span></div>
+                    <div id="qrcode"></div>
+                </div>
                 <div class="totals-container">
                     <div class="row-flex"><span>SUB TOTAL:</span><span id="outSub">0.00</span></div>
                     <div class="row-flex"><span>HALLMARK CHG:</span><span id="outHallmark">0.00</span></div>
@@ -312,14 +334,22 @@
             </div>
             
             <div class="footer-wrap">
-                <div id="qrcode"></div>
+                <!-- Lower Left Position: Terms & Conditions Box -->
+                <div class="terms-container">
+                    <strong>Terms & Conditions:</strong>
+                    <ul>
+                        <li>Once sold or exchanged, no cash refund will be entertained.</li>
+                        <li>Our Hallmark certified ornaments cannot be returned/refunded after sale.</li>
+                        <li>Hallmark ornaments are exchanged at prevailing market rate.</li>
+                    </ul>
+                </div>
                 <div class="signature-box">
                     <div style="margin-bottom:10px; border-top: 1px solid #000; padding-top: 5px;">AUTHORIZED SIGN WITH SEAL</div>
                 </div>
             </div>
         </div>
 
-        <!-- 3mm Borderless Solid Color Bottom Bar -->
+        <!-- Wider 8mm Borderless Solid Color Bottom Bar -->
         <div class="bottom-color-bar"></div>
     </div>
 
@@ -410,9 +440,11 @@
                 qrText += `${i+1}. ${it.desc} (Net: ${it.net.toFixed(3)}g)\n`;
             });
 
-            qrText += `Total Amount: ${sub.toFixed(2)}\n`;
-            if (calculatedCustomAmt > 0) {
-                qrText += `${customName}: ${calculatedCustomAmt.toFixed(2)}\n`;
+            // Rule 4 requirement: total amount is calculated via subtotal + hallmark + custom + card
+            const qrTotalFormulaAmt = sub + hallmark + calculatedCustomAmt + cardCharge;
+            qrText += `Total Amount: ${qrTotalFormulaAmt.toFixed(2)}\n`;
+            if (discount > 0) {
+                qrText += `Discount: ${discount.toFixed(2)}\n`;
             }
             qrText += `Net Payable: ${netAmount}`;
 
